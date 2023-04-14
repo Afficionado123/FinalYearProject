@@ -1,5 +1,11 @@
+ import 'dart:math';
+
 import 'package:english_words/english_words.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_database/firebase_database.dart' as fd;
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:path/path.dart' as p;
@@ -8,9 +14,15 @@ import 'dart:io';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+Future<void> main() async {
   runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -32,6 +44,26 @@ class MyApp extends StatelessWidget {
   }
 }
 
+ class PDFViewerFromUrl extends StatelessWidget {
+   const PDFViewerFromUrl({Key? key, required this.url}) : super(key: key);
+
+   final String url;
+
+   @override
+   Widget build(BuildContext context) {
+     return Scaffold(
+       appBar: AppBar(
+         title: const Text('PDF From Url'),
+       ),
+       body: const PDF().fromUrl(
+         url,
+         placeholder: (double progress) => Center(child: Text('$progress %')),
+         errorWidget: (dynamic error) => Center(child: Text(error.toString())),
+       ),
+     );
+   }
+ }
+
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
   var isLoggedIn=false;
@@ -41,6 +73,50 @@ class MyAppState extends ChangeNotifier {
    void getNext() {
     current = WordPair.random();
     notifyListeners();
+  }
+
+  Future getPdfAndUpload() async{
+    var rng = Random();
+    String randomName="";
+
+    for (var i = 0; i < 20; i++) {
+      print(rng.nextInt(100));
+      randomName += rng.nextInt(100).toString();
+    }
+
+    File file;
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.any);
+
+    if (result != null ) {
+      String fileName = '$randomName.pdf';
+      print(fileName);
+      if(result.files.isNotEmpty){
+        String? path = result.files.single.path;
+        file = File(path!);
+        savePdf(fileName, file);
+      }
+    } else {
+      print("No file selected");
+    }
+  }
+
+  final mainReference = fd.FirebaseDatabase.instance.reference().child('Database');
+  Future savePdf(String name, File pdfFile) async {
+
+    Reference reference = FirebaseStorage.instance.ref().child(name);
+    UploadTask uploadTask = reference.putFile(pdfFile, SettableMetadata(contentType: 'pdf'));
+    String url = await (await uploadTask).ref.getDownloadURL();
+    print(url);
+    documentFileUpload(url);
+    return  url;
+  }
+
+  void documentFileUpload(String str) {
+    var data = {
+      "PDF": str,
+    };
+    mainReference.child("Documents").child('pdf').set(data).then((v) {
+    });
   }
   
   void signUpHosp(String nameLoc, String licenseLoc, String privateKeyLoc) async {
@@ -370,7 +446,7 @@ class BigCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var style = theme.textTheme.displayMedium!.copyWith(
+    var style = theme.textTheme.displaySmall!.copyWith(
       color: theme.colorScheme.onPrimary,
     );
     return Card(
@@ -378,7 +454,7 @@ class BigCard extends StatelessWidget {
       elevation: 30,
       child: Padding(
         padding: const EdgeInsets.all(20),
-        child: Text(pair.asLowerCase,style: style, semanticsLabel: pair.asPascalCase,),
+        child: Text("Click to upload the file",style: style, semanticsLabel: pair.asPascalCase,),
         
       ),
     );
