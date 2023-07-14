@@ -1,9 +1,11 @@
 import 'package:english_words/english_words.dart';
+import './screens/helperFunc/viewRecord.dart';
 import 'package:redux/redux.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './screens/LoginAsPatOrDoc.dart';
@@ -11,6 +13,7 @@ import 'dart:convert';
 import 'package:path/path.dart' as p;
 import 'package:flutter/services.dart' as rootBundle;
 import 'dart:io';
+import 'dart:io' as io;
 import 'package:http/http.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:web3dart/web3dart.dart';
@@ -19,31 +22,45 @@ import 'package:redux/redux.dart';
 import 'package:web_socket_channel/io.dart';
 import './screens/SignUp.dart';
 import './screens/LoginAsPatOrDoc.dart';
+import './screens/SignUpPatient.dart';
+import './screens/WelcomePatient.dart';
+import './screens/LoginPatient.dart';
+import './screens/WelcomeDoc.dart';
+import './screens/LoginDoctor.dart';
+import './screens/GiveAccess.dart';
+import './screens/helperFunc/displaySummaryTable.dart';
+import './screens/helperFunc/listDisplayPatientListInwelcomeDoctor.dart';
+import './screens/helperFunc/listDisplayPatientListInwelcomePatient.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 import './reducers/signupState.dart';
-import 'package:go_router/go_router.dart';
+import './screens/helperFunc/router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import './screens/Login.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
+import './screens/helperFunc/listDisplayPatientListInwelcomeDoctor.dart';
+import './screens/viewRec.dart';
 bool shouldUseFirestoreEmulator = false;
 Future<void> main() async {
   
   WidgetsFlutterBinding.ensureInitialized();
+  
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  //  final emulatorHost =(!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+  //         ? '10.0.2.2'
+  //         : 'localhost';
 
-  if (shouldUseFirestoreEmulator) {
-    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-  }
+  // await FirebaseStorage.instance.useStorageEmulator(emulatorHost, 9199);
   final store = Store<SignupState>(
     signupReducer,
     initialState: SignupState(),
     middleware: [thunkMiddleware],
   );
-  
-  
+ 
+  // await FirebaseAuth.instance.signInAnonymously();
  // runApp( MyApp());
   runApp(MyApp(store: store,router: _router));
 }
@@ -53,22 +70,102 @@ final GoRouter _router = GoRouter(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
 
-        return AddUser("ddd","eeee",9,context);
+       return LoginThreeState(context:context);
+       // return LoginScreen(context:context);
       },
       routes: <RouteBase>[
-        GoRoute(
-          path: 'details',
+         GoRoute(
+          path: 'giveAccess',
           builder: (BuildContext context, GoRouterState state) {
-            return LoginThreeState();
+            return GiveAccess(context:context);
+          },
+        ),
+        GoRoute(
+          path: 'view',
+          builder: (BuildContext context, GoRouterState state) {
+            return ImageViewer(context:context);
+          },
+        ),
+        GoRoute(
+          path: 'signUpDoctor',
+          builder: (BuildContext context, GoRouterState state) {
+            return LoginScreen(context:context);
+          },
+        ),
+        GoRoute(
+          path: 'signUpPatient',
+          builder: (BuildContext context, GoRouterState state) {
+            return SignUpPatient(context:context);
           },
         ),
          GoRoute(
           path: 'loginPage',
           builder: (BuildContext context, GoRouterState state) {
-            return LoginScreen(context:context);
+            return   AddUser("ddd","eeee",9,context);
+          
           },
         ),
-      ],
+        GoRoute(
+          path: 'loginPatient',
+          builder: (BuildContext context, GoRouterState state) {
+            return LoginPatient(context: context,);
+          
+          },
+        ),
+         GoRoute(
+          path: 'loginDoctor',
+          builder: (BuildContext context, GoRouterState state) {
+            return  LoginDoctor(context: context);
+          
+          },
+            
+        ),
+         GoRoute(
+          path: 'welcomePatient',
+          builder: (BuildContext context, GoRouterState state) {
+            return   WelcomePatient(context: context);
+          
+          },
+            
+        ), GoRoute(
+          path: 'welcomeDoctor',
+          builder: (BuildContext context, GoRouterState state) {
+            return   WelcomeDoc(context: context);
+          
+          },
+            
+        ),
+        GoRoute(
+          path: 'viewPatientRecordsByDoc',
+          builder: (BuildContext context, GoRouterState state) {
+            return   WelcomeDoc(context: context);
+          
+          },
+            
+        ),
+        GoRoute(
+          name: 'df',
+          path: 'viewSummary',
+          builder: (BuildContext context, GoRouterState state) {
+            return  PatientSummaryTable(title:"Patient Summary",content: "Content/Summary",context:context);
+          
+          },
+        
+            
+        ),
+        
+         GoRoute(
+            path: 'pdf/:pdfPath',
+            name: 'pdf',
+            pageBuilder: (context, state) {
+        final pdfPath = state.pathParameters['pdfPath']!;
+     return PdfViewPage(pdfPath: pdfPath) as Page<dynamic>;
+      },
+
+          ),
+           
+        
+       ],
     ),
   ],
 );
@@ -84,17 +181,27 @@ class MyApp extends StatelessWidget {
     return StoreProvider<SignupState>(
        store: store,
       child: MaterialApp.router(
-      routerConfig: _router,
+      routerConfig: router,
     )
     );
   }
+}
+enum UploadType {
+  /// Uploads a randomly generated string (as a file) to Storage.
+  string,
+
+  /// Uploads a file from the device.
+  file,
+
+  /// Clears any tasks from the list.
+  clear,
 }
 class AddUser extends StatelessWidget {
   final String fullName;
   final String company;
   final int age;
    final BuildContext context;
-
+  
   AddUser(this.fullName, this.company, this.age, this.context);
 
   @override
@@ -119,7 +226,7 @@ class AddUser extends StatelessWidget {
      // Create a storage reference from our app
      
       if (result != null) {
-        PlatformFile file = result.files.first;
+         PlatformFile file = result.files.first;
          final storageRef = FirebaseStorage.instance.ref();
       
       // Create a reference to "mountains.jpg"
@@ -136,73 +243,91 @@ class AddUser extends StatelessWidget {
         print(file.size);
         print(file.extension);
         print(file.path);
+        File fileToBeUploaded=File(file.path.toString());
+         Reference ref = FirebaseStorage.instance
+        .ref()
+        .child('flutter-tests')
+        .child('/some-image.jpg');
+
+    final metadata = SettableMetadata(
+      contentType: 'image/jpeg',
+      customMetadata: {'picked-file-path': file.path.toString()},
+    );
+    
+     UploadTask uploadTask;
+    if (kIsWeb) {
+      uploadTask = ref.putData(await fileToBeUploaded.readAsBytes(), metadata);
+    } else {
+      uploadTask = ref.putFile(io.File(file.path.toString()), metadata);
+    }
+
       } else {
         // User canceled the picker
       }
     }
- Future<void> uploadFile() async {
-  final result = await FilePicker.platform.pickFiles();
+//  Future<void> uploadFile() async {
+//   final result = await FilePicker.platform.pickFiles();
   
-  if (result == null) print("didnt,find");
-  else{
-  // final path= result.files.single.path!;
-  // File file= File(path);
-  // if (file.existsSync()) {
-  // final Filename=basename(file!.path);
-  // final destination="files/$Filename";
+//   if (result == null) print("didnt,find");
+//   else{
+//   // final path= result.files.single.path!;
+//   // File file= File(path);
+//   // if (file.existsSync()) {
+//   // final Filename=basename(file!.path);
+//   // final destination="files/$Filename";
 
-  // Create a storage reference from our app
-//  final storageRef = FirebaseStorage.instance.ref();
+//   // Create a storage reference from our app
+// //  final storageRef = FirebaseStorage.instance.ref();
  
-// // // Create a reference to "mountains.jpg"
-// // final mountainsRef = storageRef.child(Filename);
+// // // // Create a reference to "mountains.jpg"
+// // // final mountainsRef = storageRef.child(Filename);
 
-// // // // Create a reference to 'images/mountains.jpg'
-// //  final mountainImagesRef = storageRef.child(destination);
-//  final ref=getTemporaryDirectory();
-//  Directory appDocDir = await getApplicationDocumentsDirectory();
-//  String filePath = '${appDocDir.absolute}/$';
-//  print(filePath);
-// File filesToUp = File(filePath);
+// // // // // Create a reference to 'images/mountains.jpg'
+// // //  final mountainImagesRef = storageRef.child(destination);
+// //  final ref=getTemporaryDirectory();
+// //  Directory appDocDir = await getApplicationDocumentsDirectory();
+// //  String filePath = '${appDocDir.absolute}/$';
+// //  print(filePath);
+// // File filesToUp = File(filePath);
+// // // While the file names are the same, the references point to different files
+// //await mountainsRef.putFile(filesToUp);
+// // } else {
+// //   // The file does not exist, handle the error.
+// //   print("FILE ERROR");
+// // }
+  
+// //  final downloadUrl=await mountainsRef.getDownloadURL();
+// // print("Successful!");
+// // print(downloadUrl);
+//   }
+//   // Create a storage reference from our app
+// final storageRef = FirebaseStorage.instance.ref();
+// final path= result.files.single.path!;
+//   File file= File(path);
+// // Create a reference to "mountains.jpg"
+// final mountainsRef = storageRef.child("mountains.jpg");
+
+// // Create a reference to 'images/mountains.jpg'
+// final mountainImagesRef = storageRef.child("images/mountains.jpg");
+
 // // While the file names are the same, the references point to different files
-//await mountainsRef.putFile(filesToUp);
-// } else {
-//   // The file does not exist, handle the error.
-//   print("FILE ERROR");
+// assert(mountainsRef.name == mountainImagesRef.name);
+// assert(mountainsRef.fullPath != mountainImagesRef.fullPath);
+//  Directory appDocDir = await getApplicationDocumentsDirectory();
+// String filePath = '${appDocDir.absolute}/file-to-upload.png';
+// File file = File(filePath);
+
+// try {
+//   await mountainsRef.putFile(file);
+// } on firebase_core.FirebaseException catch (e) {
+
 // }
-  
-//  final downloadUrl=await mountainsRef.getDownloadURL();
-// print("Successful!");
-// print(downloadUrl);
-  }
-  // Create a storage reference from our app
-final storageRef = FirebaseStorage.instance.ref();
-final path= result.files.single.path!;
-  File file= File(path);
-// Create a reference to "mountains.jpg"
-final mountainsRef = storageRef.child("mountains.jpg");
-
-// Create a reference to 'images/mountains.jpg'
-final mountainImagesRef = storageRef.child("images/mountains.jpg");
-
-// While the file names are the same, the references point to different files
-assert(mountainsRef.name == mountainImagesRef.name);
-assert(mountainsRef.fullPath != mountainImagesRef.fullPath);
- Directory appDocDir = await getApplicationDocumentsDirectory();
-String filePath = '${appDocDir.absolute}/file-to-upload.png';
-File file = File(filePath);
-
-try {
-  await mountainsRef.putFile(file);
-} on firebase_core.FirebaseException catch (e) {
-
-}
 
   
-}
+// }
 
      return Center(
-      child: TextButton(onPressed: uploadFile,
+      child: TextButton(onPressed: addFileWithPicker,
       child: Text("Add File"))
      );
     // return Center(
@@ -428,41 +553,41 @@ class MyHomePage extends StatelessWidget {
     var pair= "EHR Hospital functionality";
    return Scaffold(
       appBar: AppBar(title: const Text('Home Screen')),
-      body:  
-      Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-           AddUser("Hey","go to hell",23,context),
-            ElevatedButton(
-              onPressed: () => print("works"),
-              child: const Text('home', style: TextStyle(color: Colors.deepPurpleAccent),),
-            ),
-            //  ElevatedButton(
-            //   onPressed: () => context.go('/details'),
-            //   child: const Text('Go to the Details screen'),
-            // ),
-          ],
-        ),
-      ),
+      body: SignupScreen(context: context,));
+    //   Center(
+    //     child: Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: <Widget>[
+    //        AddUser("Hey","go to hell",23,context),
+    //         ElevatedButton(
+    //           onPressed: () => print("works"),
+    //           child: const Text('home', style: TextStyle(color: Colors.deepPurpleAccent),),
+    //         ),
+    //         //  ElevatedButton(
+    //         //   onPressed: () => context.go('/details'),
+    //         //   child: const Text('Go to the Details screen'),
+    //         // ),
+    //       ],
+    //     ),
+    //   ),
       
      
-      // Center(
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: <Widget>[
-      //       ElevatedButton(
-      //         onPressed: () => context.go('/'),
-      //         child: const Text('home'),
-      //       ),
-      //        ElevatedButton(
-      //         onPressed: () => context.go('/details'),
-      //         child: const Text('Go to the Details screen'),
-      //       ),
-      //     ],
-      //   ),
-      // ),
-    );
+    //   // Center(
+    //   //   child: Column(
+    //   //     mainAxisAlignment: MainAxisAlignment.center,
+    //   //     children: <Widget>[
+    //   //       ElevatedButton(
+    //   //         onPressed: () => context.go('/'),
+    //   //         child: const Text('home'),
+    //   //       ),
+    //   //        ElevatedButton(
+    //   //         onPressed: () => context.go('/details'),
+    //   //         child: const Text('Go to the Details screen'),
+    //   //       ),
+    //   //     ],
+    //   //   ),
+    //   // ),
+    // );
     //return LoginThreeState();
     
     //return SignupScreen();

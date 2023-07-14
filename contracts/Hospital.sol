@@ -10,6 +10,7 @@ contract Hospital {
     }
 
     mapping (address=>hospitalIdentity) mapAddressToHospital;
+    mapping (address => mapping(address=>uint))giveAccess;
     mapping(address => string) patientToCollectionId;
       mapping (address=>bool) isLoggedIn;
     mapping (address => string) listOfPatients;
@@ -20,7 +21,7 @@ contract Hospital {
         require(d.id > address(0x0)); //check if hospital exist
         _;
     }
-
+ 
     modifier checkIfCollectionExists(string memory id)
     {
         require(bytes(id).length>0);
@@ -32,7 +33,9 @@ contract Hospital {
         _;
     }
     
-    
+    function giveAccessToDoc(address docAdd) public {
+           giveAccess[msg.sender][docAdd]=1;
+    }
     function getCollectionId(address pat_key)
         public
         view

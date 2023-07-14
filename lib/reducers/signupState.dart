@@ -12,6 +12,7 @@ class SignupState {
   final String nameLoc;
   final String licenseLoc;
   final String privateKeyLoc;
+  final String summary;
   SignupState({
     this.email = '',	
     this.password = '',
@@ -19,7 +20,8 @@ class SignupState {
     this.error = '',
     this.licenseLoc='',
     this.nameLoc='',
-    this.privateKeyLoc=''
+    this.privateKeyLoc='',
+    this.summary=''
   });
  SignupState copyWith({
     String? email,
@@ -28,7 +30,8 @@ class SignupState {
     String? error,
     String? licenseLoc,
     String? nameLoc,
-    String? privateKeyLoc
+    String? privateKeyLoc,
+    String? summary
   }) {
     return SignupState(
       email: email ?? this.email,
@@ -38,7 +41,7 @@ class SignupState {
       licenseLoc: licenseLoc ?? this.licenseLoc,
       nameLoc:  nameLoc ?? this. nameLoc,
      privateKeyLoc: privateKeyLoc ?? this.privateKeyLoc,
-     
+     summary: summary ?? this.summary,
 
     );
   }
@@ -50,8 +53,12 @@ SignupState signupReducer(SignupState state, dynamic action) {
   if (action is UpdateEmailAction) {
     return state.copyWith(email: action.email);
   } else if (action is UpdatePasswordAction) {
-    return state.copyWith(password: action.password);
-  } else if (action is UpdatelicenseLocAction) {
+    return state.copyWith(password: action.password); 
+  }
+  else if (action is UpdateSummaryAction) {
+    return state.copyWith(summary: action.summary);
+  }
+   else if (action is UpdatelicenseLocAction) {
     return state.copyWith( licenseLoc: action.licenseLoc);
   } 
    else if (action is UpdatenameLocAction) {

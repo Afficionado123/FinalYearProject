@@ -11,10 +11,10 @@ import '../middleware/signupmiddleware.dart';
 import 'package:go_router/go_router.dart';
 import './helperFunc/modals.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginDoctor extends StatelessWidget {
  final BuildContext context;
 
- LoginScreen({Key? key, required this.context}) : super(key: key);
+ LoginDoctor({Key? key, required this.context}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,34 +46,8 @@ class LoginScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         SizedBox(height: 90.0,),
-                         Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20.0),
-                            child: TextField(
-                              cursorColor: Color.fromRGBO(10,145,171,1.0),
-                                onChanged: (hosName) => viewModel.onnameLocChanged(hosName),
-                              style: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
-                              decoration: InputDecoration(
-                                  hintText: "Hospital Name",
-                                  hintStyle: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
-                                  border: InputBorder.none,
-                                  icon: Icon(Icons.lock, color: Color.fromRGBO(10,145,171,1.0),)
-                              ),
-                            )
-                        ),
-                         Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20.0),
-                            child: TextField(
-                              cursorColor: Color.fromRGBO(10,145,171,1.0),
-                                onChanged: (licenseLoc) => viewModel.onlicenseLocChanged(licenseLoc),
-                              style: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
-                              decoration: InputDecoration(
-                                  hintText: "License Number",
-                                  hintStyle: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
-                                  border: InputBorder.none,
-                                  icon: Icon(Icons.lock, color: Color.fromRGBO(10,145,171,1.0),)
-                              ),
-                            )
-                        ),
+                        
+                        
                          Container(
                             padding: EdgeInsets.symmetric(horizontal: 20.0),
                             child: TextField(
@@ -88,21 +62,7 @@ class LoginScreen extends StatelessWidget {
                               ),
                             )
                         ),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
-                          child: TextField(
-                            cursorColor: Color.fromRGBO(10,145,171,1.0),
-                            onChanged: (email) => viewModel.onEmailChanged(email),
-                            style: TextStyle( color: Color.fromRGBO(10,145,171,1.0)),
-                            decoration: InputDecoration(
-                                hintText: "Email address",
-                                
-                                hintStyle: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
-                                border: InputBorder.none,
-                                icon: Icon(Icons.email, color: Color.fromRGBO(10,145,171,1.0),)
-                            ),
-                          ),
-                        ),
+                       
                      
                         Container(child: Divider(color: Color.fromRGBO(10,145,171,1.0),), padding: EdgeInsets.only(left: 20.0,right: 20.0, bottom: 10.0),),
                         Row(
@@ -137,35 +97,18 @@ class LoginScreen extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.bottomCenter,
                       child: ElevatedButton(
-                        onPressed: () async{
-                          try{
-                               viewModel.onSignupButtonPressed();
-                          
-                            await showDialog(
-            context: context,
-            builder: (BuildContext context) {
-                return MyModal(
-                    title: 'SignUp Status',
-                    content: 'SignUp Successful!',
-                    router: router,
-                );
-            },
-        );
-                          }
-                       
-                          catch(e){
-                            print("error");
-                          }
-                          
-                       
-                        print(viewModel.email);
-                      },
+                        onPressed: () 
+                        {
+                         
+                          viewModel.onLoginButtonPressed();
+                          router.go('/welcomeDoctor');
 
+                        } ,
                         style:ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
                         backgroundColor: Color.fromRGBO(10,145,171,1.0),
                         ),
-                        child: Text("Sign Up", style: TextStyle(color: Colors.white)),
+                        child: Text("Login", style: TextStyle(color: Colors.white)),
                        
                        
                       ),
@@ -180,9 +123,9 @@ class LoginScreen extends StatelessWidget {
             ),
               Container(
                               child: TextButton(
-                                child: Text("Already have an account? Login", style: TextStyle(color: Color.fromRGBO(10,145,171,1.0),),),
+                                child: Text("Dont have an account? Sign Up", style: TextStyle(color: Color.fromRGBO(10,145,171,1.0),),),
                                
-                                onPressed: () {router.go('/loginDoctor');},
+                                onPressed: () {router.go('/signUpPatient');},
                               ),
                             ),
           ],
@@ -201,7 +144,7 @@ class SignupViewModel {
   final Function(String) onnameLocChanged;
   final Function(String) onlicenseLocChanged;
   final Function(String) onprivateKeyChanged;
-  final Function() onSignupButtonPressed;
+  final Function() onLoginButtonPressed;
 
   SignupViewModel({
     required this.email,
@@ -215,7 +158,7 @@ class SignupViewModel {
     required this.onnameLocChanged,
     required this.onlicenseLocChanged,
     required this.onprivateKeyChanged,
-    required this.onSignupButtonPressed,
+    required this.onLoginButtonPressed,
   });
 
   static SignupViewModel fromStore(Store<SignupState> store) {
@@ -231,8 +174,8 @@ class SignupViewModel {
         onnameLocChanged: (nameLoc) => store.dispatch(UpdatelicenseLocAction(nameLoc)),
         onlicenseLocChanged: (licenseLoc) => store.dispatch(UpdatelicenseLocAction(licenseLoc)),
         onprivateKeyChanged: (privateKey) => store.dispatch(UpdateprivateKeyLocAction(privateKey)),
-        onSignupButtonPressed: () {
-          store.dispatch(signupThunkDoc);
+        onLoginButtonPressed: () {
+          store.dispatch(loginThunkDoc);
         });
   }
 }

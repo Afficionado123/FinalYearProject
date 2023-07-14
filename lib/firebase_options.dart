@@ -8,11 +8,11 @@ import 'package:flutter/foundation.dart'
 ///
 /// Example:
 /// ```dart
- //import 'firebase_options.dart';
-
-// await Firebase.initializeApp(
-//  options: DefaultFirebaseOptions.currentPlatform,
-//  );
+/// import 'firebase_options.dart';
+/// // ...
+/// await Firebase.initializeApp(
+///   options: DefaultFirebaseOptions.currentPlatform,
+/// );
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '623262723962',
     projectId: 'ehrproj-406af',
     authDomain: 'ehrproj-406af.firebaseapp.com',
+    databaseURL: 'https://ehrproj-406af-default-rtdb.firebaseio.com',
     storageBucket: 'ehrproj-406af.appspot.com',
     measurementId: 'G-TFD56J708D',
   );
@@ -58,6 +59,7 @@ class DefaultFirebaseOptions {
     appId: '1:623262723962:android:b4fe5b8dfb5bb7fdbdb0c3',
     messagingSenderId: '623262723962',
     projectId: 'ehrproj-406af',
+    databaseURL: 'https://ehrproj-406af-default-rtdb.firebaseio.com',
     storageBucket: 'ehrproj-406af.appspot.com',
   );
 
@@ -66,6 +68,7 @@ class DefaultFirebaseOptions {
     appId: '1:623262723962:ios:46bfbc0b292d3bf1bdb0c3',
     messagingSenderId: '623262723962',
     projectId: 'ehrproj-406af',
+    databaseURL: 'https://ehrproj-406af-default-rtdb.firebaseio.com',
     storageBucket: 'ehrproj-406af.appspot.com',
     iosClientId: '623262723962-ll6r75s63u7hn6e5rsl6bg4njk0mpbij.apps.googleusercontent.com',
     iosBundleId: 'com.example.flutterApplication1',
@@ -76,6 +79,7 @@ class DefaultFirebaseOptions {
     appId: '1:623262723962:ios:46bfbc0b292d3bf1bdb0c3',
     messagingSenderId: '623262723962',
     projectId: 'ehrproj-406af',
+    databaseURL: 'https://ehrproj-406af-default-rtdb.firebaseio.com',
     storageBucket: 'ehrproj-406af.appspot.com',
     iosClientId: '623262723962-ll6r75s63u7hn6e5rsl6bg4njk0mpbij.apps.googleusercontent.com',
     iosBundleId: 'com.example.flutterApplication1',

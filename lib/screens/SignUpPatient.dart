@@ -11,10 +11,10 @@ import '../middleware/signupmiddleware.dart';
 import 'package:go_router/go_router.dart';
 import './helperFunc/modals.dart';
 
-class LoginScreen extends StatelessWidget {
+class SignUpPatient extends StatelessWidget {
  final BuildContext context;
 
- LoginScreen({Key? key, required this.context}) : super(key: key);
+ SignUpPatient({Key? key, required this.context}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class LoginScreen extends StatelessWidget {
                                 onChanged: (hosName) => viewModel.onnameLocChanged(hosName),
                               style: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
                               decoration: InputDecoration(
-                                  hintText: "Hospital Name",
+                                  hintText: "Patient Name",
                                   hintStyle: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
                                   border: InputBorder.none,
                                   icon: Icon(Icons.lock, color: Color.fromRGBO(10,145,171,1.0),)
@@ -67,7 +67,7 @@ class LoginScreen extends StatelessWidget {
                                 onChanged: (licenseLoc) => viewModel.onlicenseLocChanged(licenseLoc),
                               style: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
                               decoration: InputDecoration(
-                                  hintText: "License Number",
+                                  hintText: "Age",
                                   hintStyle: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
                                   border: InputBorder.none,
                                   icon: Icon(Icons.lock, color: Color.fromRGBO(10,145,171,1.0),)
@@ -182,7 +182,7 @@ class LoginScreen extends StatelessWidget {
                               child: TextButton(
                                 child: Text("Already have an account? Login", style: TextStyle(color: Color.fromRGBO(10,145,171,1.0),),),
                                
-                                onPressed: () {router.go('/loginDoctor');},
+                                onPressed: () {router.go('/loginPatient');},
                               ),
                             ),
           ],

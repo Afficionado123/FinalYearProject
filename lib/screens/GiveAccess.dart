@@ -11,10 +11,10 @@ import '../middleware/signupmiddleware.dart';
 import 'package:go_router/go_router.dart';
 import './helperFunc/modals.dart';
 
-class LoginScreen extends StatelessWidget {
+class GiveAccess extends StatelessWidget {
  final BuildContext context;
 
- LoginScreen({Key? key, required this.context}) : super(key: key);
+ GiveAccess({Key? key, required this.context}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,34 +46,8 @@ class LoginScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         SizedBox(height: 90.0,),
-                         Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20.0),
-                            child: TextField(
-                              cursorColor: Color.fromRGBO(10,145,171,1.0),
-                                onChanged: (hosName) => viewModel.onnameLocChanged(hosName),
-                              style: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
-                              decoration: InputDecoration(
-                                  hintText: "Hospital Name",
-                                  hintStyle: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
-                                  border: InputBorder.none,
-                                  icon: Icon(Icons.lock, color: Color.fromRGBO(10,145,171,1.0),)
-                              ),
-                            )
-                        ),
-                         Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20.0),
-                            child: TextField(
-                              cursorColor: Color.fromRGBO(10,145,171,1.0),
-                                onChanged: (licenseLoc) => viewModel.onlicenseLocChanged(licenseLoc),
-                              style: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
-                              decoration: InputDecoration(
-                                  hintText: "License Number",
-                                  hintStyle: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
-                                  border: InputBorder.none,
-                                  icon: Icon(Icons.lock, color: Color.fromRGBO(10,145,171,1.0),)
-                              ),
-                            )
-                        ),
+                        
+                        
                          Container(
                             padding: EdgeInsets.symmetric(horizontal: 20.0),
                             child: TextField(
@@ -81,40 +55,20 @@ class LoginScreen extends StatelessWidget {
                                 onChanged: (privateKey) => viewModel.onprivateKeyChanged(privateKey),
                               style: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
                               decoration: InputDecoration(
-                                  hintText: "Private Key",
+                                  hintText: "Doctor's Public Key",
                                   hintStyle: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
                                   border: InputBorder.none,
                                   icon: Icon(Icons.lock, color: Color.fromRGBO(10,145,171,1.0),)
                               ),
                             )
                         ),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
-                          child: TextField(
-                            cursorColor: Color.fromRGBO(10,145,171,1.0),
-                            onChanged: (email) => viewModel.onEmailChanged(email),
-                            style: TextStyle( color: Color.fromRGBO(10,145,171,1.0)),
-                            decoration: InputDecoration(
-                                hintText: "Email address",
-                                
-                                hintStyle: TextStyle(color: Color.fromRGBO(10,145,171,1.0)),
-                                border: InputBorder.none,
-                                icon: Icon(Icons.email, color: Color.fromRGBO(10,145,171,1.0),)
-                            ),
-                          ),
-                        ),
+                       
                      
                         Container(child: Divider(color: Color.fromRGBO(10,145,171,1.0),), padding: EdgeInsets.only(left: 20.0,right: 20.0, bottom: 10.0),),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            Container(
-                              child: TextButton(
-                                child: Text('Forgot Password', style: TextStyle(color: Color.fromRGBO(10,145,171,1.0),),),
-                               
-                                onPressed: () {},
-                              ),
-                            ),
+                            
                           ],
                         ),
                         SizedBox(height: 10.0,),
@@ -137,7 +91,7 @@ class LoginScreen extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.bottomCenter,
                       child: ElevatedButton(
-                        onPressed: () async{
+                            onPressed: () async{
                           try{
                                viewModel.onSignupButtonPressed();
                           
@@ -145,8 +99,8 @@ class LoginScreen extends StatelessWidget {
             context: context,
             builder: (BuildContext context) {
                 return MyModal(
-                    title: 'SignUp Status',
-                    content: 'SignUp Successful!',
+                    title: 'Access Status',
+                    content: 'Acess given Successfully!',
                     router: router,
                 );
             },
@@ -165,7 +119,7 @@ class LoginScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
                         backgroundColor: Color.fromRGBO(10,145,171,1.0),
                         ),
-                        child: Text("Sign Up", style: TextStyle(color: Colors.white)),
+                        child: Text("Give Access", style: TextStyle(color: Colors.white)),
                        
                        
                       ),
@@ -180,9 +134,9 @@ class LoginScreen extends StatelessWidget {
             ),
               Container(
                               child: TextButton(
-                                child: Text("Already have an account? Login", style: TextStyle(color: Color.fromRGBO(10,145,171,1.0),),),
+                                child: Text("Go to home page", style: TextStyle(color: Color.fromRGBO(10,145,171,1.0),),),
                                
-                                onPressed: () {router.go('/loginDoctor');},
+                                onPressed: () {router.go('/welcomePatient');},
                               ),
                             ),
           ],
@@ -232,7 +186,7 @@ class SignupViewModel {
         onlicenseLocChanged: (licenseLoc) => store.dispatch(UpdatelicenseLocAction(licenseLoc)),
         onprivateKeyChanged: (privateKey) => store.dispatch(UpdateprivateKeyLocAction(privateKey)),
         onSignupButtonPressed: () {
-          store.dispatch(signupThunkDoc);
+          store.dispatch(loginThunkDoc);
         });
   }
 }

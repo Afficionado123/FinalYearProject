@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "623262723962",
+    "firebase_url": "https://ehrproj-406af-default-rtdb.firebaseio.com",
     "project_id": "ehrproj-406af",
     "storage_bucket": "ehrproj-406af.appspot.com"
   },
@@ -29,6 +30,13 @@
             {
               "client_id": "623262723962-60um7sbf4ven8d4rt7a3r2d5rjqft254.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "623262723962-ll6r75s63u7hn6e5rsl6bg4njk0mpbij.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterApplication1"
+              }
             }
           ]
         }

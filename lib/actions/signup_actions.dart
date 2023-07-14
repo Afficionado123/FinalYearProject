@@ -15,7 +15,17 @@ class UpdateEmailAction {
     return 'UpdateEmailAction{email: $email}';
   }
 }
+class UpdateSummaryAction {
+  final String summary;
 
+  UpdateSummaryAction(this.summary);
+
+  @override
+  String toString() {
+    print("summary $summary");
+    return 'UpdateEmailAction{summary: $summary}';
+  }
+}
 class UpdatePasswordAction {
   final String password;
 
@@ -62,6 +72,14 @@ class SignupRequestAction {
      @override
   String toString() {
     print("Succesful signUp");
+    return "Successful";
+  }
+}
+class LoginRequestAction {
+   
+     @override
+  String toString() {
+    print("Succesful login");
     return "Successful";
   }
 }

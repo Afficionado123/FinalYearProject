@@ -18,8 +18,8 @@ void signUpHosp( var nameLoc, var licenseLoc, var privateKeyLoc) async {
     
       print(licenseLoc);
       String CollectionAssigned= "09182828288"; //TO BE DONE WITH FIREBASE
-      const String rpcUrl = 'http://192.168.0.6:8545';
-      var privateKey="a56c81d3e4c25d73e4dc97db93f5b8cf4e208700fc4bdedf0ded046e3feb945a";
+      const String rpcUrl = '192.168.4.17:7545';
+      var privateKey="bb25df6348afc5f3bfa5bd72893667db7a240eaa89ec382cd931cc0503272bd2";
       final client = Web3Client(rpcUrl, Client());
       final credentials = EthPrivateKey.fromHex(privateKey);
       final address = credentials.address;  
